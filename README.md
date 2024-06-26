@@ -1,16 +1,15 @@
-# messenger
+# Messenger
 
-A new Flutter project.
+This is a messenger app built with Flutter, allowing users to send messages, share images, and engage in various interactions on mobile platforms.
 
-## Getting Started
+# Features
 
-This project is a starting point for a Flutter application.
+Send and receive text messages.  
+Share photos from gallery or capture directly from camera.  
+User authentication and registration.  
+View list of conversations.  
+Add friends and manage contacts.  
 
-A few resources to get you started if this is your first Flutter project:
+# Directory Structure
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+lib/: Contains the main source code of the app.
