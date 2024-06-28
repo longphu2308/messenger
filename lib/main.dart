@@ -10,50 +10,60 @@ void main() {
       appBar: AppBar(
         // Scaffold có thuộc tính appBar truyền vào 1 AppBar, AppBar có thuộc tính backgroundColor và title
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           'Messenger',
           style: TextStyle(fontWeight: FontWeight.bold),
         ), // title cần truyền vào 1 Widget, có thể truyền vào Image hoặc Text
       ),
       body: Container(
-        color:Colors.grey[200],
+        color: Colors.grey[200],
         child: ListView.builder(
           // Scaffold có thuộc tính body, a truyền vào 1 ListView
           itemCount: 100,
           // ListView có thuộc tính itemCount quyết định listview đó có bao nhiêu item
           itemBuilder: (context, index) {
             // thuộc tính itemBuilder dùng để build UI của 1 item dựa vào index
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.5),
-              child: Container(
-                padding: EdgeInsets.all(5),
-                color: Colors.white,
-                // widget Center dùng để canh giữa widget child của nó
-                child: Row(
-                  children: [
-                    Container(child: SizedBox(width: 10)),
-                    ClipRRect(
-                      borderRadius:BorderRadius.circular(50),
-                      child: Image.network(
-                        'https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375_1280.png',
-                        width: 90,
-                        height: 90,
-                      ),
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 2.5),
+              padding: const EdgeInsets.all(5),
+              color: Colors.white,
+              // widget Center dùng để canh giữa widget child của nó
+              child: Row(
+                children: [
+                  Container(child: const SizedBox(width: 10)),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.network(
+                      'https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375_1280.png',
+                      width: 90,
+                      height: 90,
                     ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(
-                        'Long Phú',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 24),
-                      ),
-                      Text('Hello, friend.', textAlign: TextAlign.left,style: TextStyle(fontSize: 18,fontWeight: FontWeight.w700),)
-                    ])
-                  ],
-                ), // widget Text dùng tạo ra Text
-              ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Long Phú' * 100,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 24),
+                          ),
+                          Text(
+                            'Hello, friend.' * 100,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w700),
+                          )
+                        ]),
+                  )
+                ],
+              ), // widget Text dùng tạo ra Text
             );
           },
         ),
