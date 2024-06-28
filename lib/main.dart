@@ -16,7 +16,7 @@ void main() {
         ), // title cần truyền vào 1 Widget, có thể truyền vào Image hoặc Text
       ),
       body: Container(
-        color: Colors.grey[200],
+        color: Colors.blue,
         child: ListView.builder(
           // Scaffold có thuộc tính body, a truyền vào 1 ListView
           itemCount: 100,
