@@ -28,16 +28,16 @@ class _HomePageState extends State<HomePage> {
         key: _scaffoldKey,
         backgroundColor: Colors.white,
         drawer: Drawer(
+          backgroundColor: Colors.white,
           width: 360,
           child: ListView(
             children: [
               Container(
-                color: Colors.white,
                 height: 90,
                 child: DrawerHeader(
-                //   decoration: BoxDecoration(
-                //     boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)]
-                // ),
+                  // decoration: BoxDecoration(
+                  //   boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)]
+                  // ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
