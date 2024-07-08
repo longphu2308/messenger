@@ -1,9 +1,49 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:chatview/chatview.dart';
 import 'package:intl/intl.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isIOS) {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: "AIzaSyBTM49IRZCB6qKF0LrVscztjg7tKHldI2Q",
+        appId: "1:589403131839:ios:637aa04b5a0f2546fc9b0a",
+        messagingSenderId: "589403131839",
+        projectId: "messenger-7b147",
+      ),
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
   runApp(HomePage());
+}
+
+class User {
+  final String name;
+  final int age;
+  final String? avatar;
+
+  User({
+    required this.name,
+    required this.age,
+    this.avatar,
+  });
+
+  //fromMap
+  User.fromMap(Map<String, dynamic> map)
+      : name = map['name'],
+        avatar = map['avatar'],
+        age = map['age'];
+
+  @override
+  String toString() {
+    return 'User{name: $name, age: $age}';
+  }
 }
 
 class HomePage extends StatefulWidget {
@@ -18,7 +58,26 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int currentIndex = 0;
-  var title = ['Chats','Contacts','Reels'];
+  var title = ['Chats', 'Contacts', 'Reels'];
+  List<User> users = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      // listen realtime
+      FirebaseFirestore.instance
+          .collection("users")
+          .snapshots()
+          .listen((event) {
+        final users = event.docs.map((e) => User.fromMap(e.data())).toList();
+        print(users);
+        setState(() {
+          this.users = users;
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,20 +111,89 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(width: 20),
-                          Text('Long Phú',maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 20),),
-                          Icon(Icons.keyboard_arrow_down,color: Colors.black,size: 40,)
+                          Text(
+                            'Long Phú',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.black,
+                            size: 40,
+                          )
                         ],
                       ),
-                      Icon(Icons.settings,color: Colors.black,size: 30,)
+                      Icon(
+                        Icons.settings,
+                        color: Colors.black,
+                        size: 30,
+                      )
                     ],
                   ),
-                   
                 ),
               ),
-              ListTile(horizontalTitleGap:30,minVerticalPadding: 25,leading: Icon(Icons.chat_bubble,color: Colors.black,size: 30,),title: Text('Chats',maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),),
-              ListTile(horizontalTitleGap:30,minVerticalPadding: 25,leading: Icon(Icons.storefront,color: Colors.black,size: 30,),title: Text('Marketplace',maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),),
-              ListTile(horizontalTitleGap:30,minVerticalPadding: 25,leading: Icon(Icons.sms,color: Colors.black,size: 30,),title: Text('Message Requests',maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),),
-              ListTile(horizontalTitleGap:30,minVerticalPadding: 25,leading: Icon(Icons.inventory_2,color: Colors.black,size: 30,),title: Text('Archived',maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),),
+              ListTile(
+                horizontalTitleGap: 30,
+                minVerticalPadding: 25,
+                leading: Icon(
+                  Icons.chat_bubble,
+                  color: Colors.black,
+                  size: 30,
+                ),
+                title: Text(
+                  'Chats',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+              ),
+              ListTile(
+                horizontalTitleGap: 30,
+                minVerticalPadding: 25,
+                leading: Icon(
+                  Icons.storefront,
+                  color: Colors.black,
+                  size: 30,
+                ),
+                title: Text(
+                  'Marketplace',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+              ),
+              ListTile(
+                horizontalTitleGap: 30,
+                minVerticalPadding: 25,
+                leading: Icon(
+                  Icons.sms,
+                  color: Colors.black,
+                  size: 30,
+                ),
+                title: Text(
+                  'Message Requests',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+              ),
+              ListTile(
+                horizontalTitleGap: 30,
+                minVerticalPadding: 25,
+                leading: Icon(
+                  Icons.inventory_2,
+                  color: Colors.black,
+                  size: 30,
+                ),
+                title: Text(
+                  'Archived',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+              ),
             ],
           ),
         ),
@@ -73,12 +201,16 @@ class _HomePageState extends State<HomePage> {
           preferredSize: Size.fromHeight(65),
           child: Container(
             decoration: BoxDecoration(
-            boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)]
-          ),
+                boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)]),
             child: AppBar(
               leading: IconButton(
-                icon: Icon(Icons.reorder, color: Colors.black,),
-                onPressed: () {_scaffoldKey.currentState?.openDrawer();},
+                icon: Icon(
+                  Icons.reorder,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
               ),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,7 +219,10 @@ class _HomePageState extends State<HomePage> {
                     title[currentIndex],
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Icon(Icons.edit,color: Colors.black,)
+                  Icon(
+                    Icons.edit,
+                    color: Colors.black,
+                  )
                 ],
               ),
             ),
@@ -96,14 +231,22 @@ class _HomePageState extends State<HomePage> {
         body: Container(
           color: Colors.white,
           child: ListView.builder(
-            itemCount: 100,
+            itemCount: users.length,
             itemBuilder: (context, index) {
+              final user = users[index];
+
               return InkWell(
                 onTap: () => {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => MessagePage(),
+                  //   ),
+                  // )
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MessagePage(),
+                      builder: (context) => FirestoreDemo(),
                     ),
                   )
                 },
@@ -116,7 +259,8 @@ class _HomePageState extends State<HomePage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(40),
                           child: Image.network(
-                            'https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375_1280.png',
+                            user.avatar ??
+                                'https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375_1280.png',
                             width: 80,
                             height: 80,
                           ),
@@ -129,7 +273,7 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Long Phú',
+                                  user.name,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -137,7 +281,7 @@ class _HomePageState extends State<HomePage> {
                                       fontSize: 20),
                                 ),
                                 Text(
-                                  'Hello',
+                                  'Age: ${user.age}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -171,9 +315,10 @@ class _HomePageState extends State<HomePage> {
         ),
         bottomNavigationBar: Container(
           height: 110,
-          decoration: BoxDecoration(
-            boxShadow: [BoxShadow(color: const Color.fromARGB(255, 235, 235, 235), blurRadius: 5)]
-          ),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+                color: const Color.fromARGB(255, 235, 235, 235), blurRadius: 5)
+          ]),
           child: BottomNavigationBar(
               backgroundColor: Colors.white,
               selectedItemColor: Colors.blueAccent,
@@ -233,8 +378,7 @@ class _MessagePageState extends State<MessagePage> {
         preferredSize: Size.fromHeight(65),
         child: Container(
           decoration: BoxDecoration(
-            boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)]
-          ),
+              boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)]),
           child: AppBar(
             leading: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.purple, size: 30),
@@ -300,6 +444,141 @@ class _MessagePageState extends State<MessagePage> {
           enableGalleryImagePicker: false,
         ),
         chatViewState: ChatViewState.hasMessages,
+      ),
+    );
+  }
+}
+
+class FirestoreDemo extends StatefulWidget {
+  @override
+  State<FirestoreDemo> createState() => _FirestoreDemoState();
+}
+
+class _FirestoreDemoState extends State<FirestoreDemo> {
+  String text = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Firestore Demo',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Firestore Demo'),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              Text(text),
+              ElevatedButton(
+                onPressed: () async {
+                  final nhi = await FirebaseFirestore.instance
+                      .collection("users")
+                      .get();
+                  final users =
+                      nhi.docs.map((e) => User.fromMap(e.data())).toList();
+                  print(users);
+                  setState(() {
+                    text = users.join('\n');
+                  });
+                },
+                child: Text('Get all users'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc('nhi')
+                      .get()
+                      .then((value) {
+                    final user = User.fromMap(value.data()!);
+                    print(user);
+                    setState(() {
+                      text = user.toString();
+                    });
+                  });
+                },
+                child: Text('Get user by id (nhi)'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // add user minh
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc('minh')
+                      .set({
+                    'name': 'Minh',
+                    'age': 30,
+                  });
+
+                  // get lại all users để kiểm tra
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .get()
+                      .then((value) {
+                    final users =
+                        value.docs.map((e) => User.fromMap(e.data())).toList();
+                    print(users);
+                    setState(() {
+                      text = users.join('\n');
+                    });
+                  });
+                },
+                child: Text('Add user (minh)'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // update user minh
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc('minh')
+                      .update({
+                    'name': 'Thanh Minh',
+                    'age': 31,
+                    'avatar':
+                        'https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375_1280.png'
+                  });
+
+                  // get lại all users để kiểm tra
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .get()
+                      .then((value) {
+                    final users =
+                        value.docs.map((e) => User.fromMap(e.data())).toList();
+                    print(users);
+                    setState(() {
+                      text = users.join('\n');
+                    });
+                  });
+                },
+                child: Text('Update user (minh)'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // delete user minh
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc('minh')
+                      .delete();
+
+                  // get lại all users để kiểm tra
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .get()
+                      .then((value) {
+                    final users =
+                        value.docs.map((e) => User.fromMap(e.data())).toList();
+                    print(users);
+                    setState(() {
+                      text = users.join('\n');
+                    });
+                  });
+                },
+                child: Text('Delete user (minh)'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
